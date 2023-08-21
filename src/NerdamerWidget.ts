@@ -10,7 +10,7 @@ import { SyntaxNodeRef } from "@lezer/common";
 
 // Patterns for various string matches
 const PATTERNS = {
-  VARIABLE_DECLARATION: /^([a-z_][a-z\d\_]*):=(.+)$/i,
+  VARIABLE_DECLARATION: /^([a-z_][a-z\d_]*):=(.+)$/i,
   SOLVE_STRING: /^solve\(([^,]+),\s*([^)]+)\)$/i,
   EVALUATE_STRING: /^([^=]+)=\?$/i,
   FUNCTION_STRING: /^([a-zA-Z_][a-zA-Z_0-9]*)\s*\(\s*([^)]+)\s*\)\s*:=\s*([^$]+)$/i,
