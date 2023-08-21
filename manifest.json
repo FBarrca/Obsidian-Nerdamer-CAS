@@ -1,0 +1,10 @@
+{
+  "id": "nerd-calculator",
+  "name": "Nerdamer inline calculator",
+  "description": "Do powerful math calculations inline with your notes, without loosing focus.",
+  "version": "0.1.1",
+  "author": "FBarrca",
+  "authorUrl": "https://github.com/FBarrCa/",
+  "isDesktopOnly": false,
+  "minAppVersion": "0.15.2"
+}

@@ -1,0 +1,40 @@
+{
+  "name": "obsidian-lapel",
+  "version": "0.1.1",
+  "description": "Dress up your editor with decorations that mark each of your headings 🤵",
+  "author": "liamcain",
+  "main": "main.js",
+  "license": "MIT",
+  "scripts": {
+    "lint": "eslint . --ext .ts",
+    "dev": "node esbuild.config.mjs",
+    "build": "yarn run lint && node esbuild.config.mjs production"
+  },
+  "peerDependencies": {
+    "@codemirror/language": "https://github.com/lishid/cm-language",
+    "@codemirror/view": "^6.0.1"
+  },
+  "dependencies": {
+    "lodash": "4.17.21",
+    "nerdamer": "^1.1.13"
+  },
+  "devDependencies": {
+    "@codemirror/basic-setup": "^0.20.0",
+    "@codemirror/buildhelper": "^0.1.16",
+    "@codemirror/lang-css": "^6.0.0",
+    "@codemirror/state": "^6.0.1",
+    "@codemirror/view": "^6.0.1",
+    "@lezer/common": "^1.0.0",
+    "@types/lodash": "4.14.179",
+    "@types/node": "^16.11.6",
+    "@typescript-eslint/eslint-plugin": "5.13.0",
+    "@typescript-eslint/parser": "5.13.0",
+    "builtin-modules": "^3.2.0",
+    "esbuild": "^0.14.45",
+    "eslint": "8.3.0",
+    "monkey-around": "2.3.0",
+    "obsidian": "0.15.1",
+    "tslib": "2.3.1",
+    "typescript": "4.5.2"
+  }
+}
