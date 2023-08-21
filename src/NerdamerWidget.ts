@@ -95,9 +95,13 @@ function handleInlineCodeNode(
   }
 
   if (isCursorInsideNode(cursorPos, node)) return;
+  renderNerdamerBlock(node, content, builder);
+}
+
+function renderNerdamerBlock(node: SyntaxNodeRef, content: string, builder: RangeSetBuilder<Decoration>): void {
   builder.add(
-    node.from,
-    node.to,
+    node.from - 1,
+    node.to + 1,
     Decoration.replace({
       widget: new LatexWidget(content),
     })
