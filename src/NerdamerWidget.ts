@@ -13,7 +13,7 @@ const PATTERNS = {
   VARIABLE_DECLARATION: /^([a-z_][a-z\d\_]*):=(.+)$/i,
   SOLVE_STRING: /^solve\(([^,]+),\s*([^)]+)\)$/i,
   EVALUATE_STRING: /^([^=]+)=\?$/i,
-  FUNCTION_STRING: /^([a-zA-Z_][a-zA-Z_0-9]*)\s*\(\s*([^)]+)\s*\)\s*:=\s*([^$]+)$/i
+  FUNCTION_STRING: /^([a-zA-Z_][a-zA-Z_0-9]*)\s*\(\s*([^)]+)\s*\)\s*:=\s*([^$]+)$/i,
 };
 
 // State Field for Nerdamer List
@@ -76,12 +76,12 @@ function handleInlineCodeNode(
   builder: RangeSetBuilder<Decoration>
 ): void {
   let content = transaction.state.sliceDoc(node.from, node.to);
-  
-    const varMatch = PATTERNS.VARIABLE_DECLARATION.exec(content);
-    const solveMatch = PATTERNS.SOLVE_STRING.exec(content);
-    const evalMatch = PATTERNS.EVALUATE_STRING.exec(content);
-    const funcMatch = PATTERNS.FUNCTION_STRING.exec(content);
-  
+
+  const varMatch = PATTERNS.VARIABLE_DECLARATION.exec(content);
+  const solveMatch = PATTERNS.SOLVE_STRING.exec(content);
+  const evalMatch = PATTERNS.EVALUATE_STRING.exec(content);
+  const funcMatch = PATTERNS.FUNCTION_STRING.exec(content);
+
   if (varMatch) {
     content = setNerdamerVariable(varMatch[1], varMatch[2]);
   } else if (solveMatch) {
@@ -90,7 +90,10 @@ function handleInlineCodeNode(
     content = evaluateExpression(evalMatch[1]);
   } else if (funcMatch) {
     content = createFunction(funcMatch[1], funcMatch[2], funcMatch[3]);
+  } else {
+    return; // was a normal inline code block
   }
+
   if (isCursorInsideNode(cursorPos, node)) return;
   builder.add(
     node.from,
