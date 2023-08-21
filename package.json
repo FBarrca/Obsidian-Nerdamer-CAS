@@ -8,7 +8,7 @@
   "scripts": {
     "lint": "eslint . --ext .ts",
     "dev": "node esbuild.config.mjs",
-    "build": "yarn run lint && node esbuild.config.mjs production"
+    "build": "npm run lint && node esbuild.config.mjs production"
   },
   "peerDependencies": {
     "@codemirror/language": "https://github.com/lishid/cm-language",

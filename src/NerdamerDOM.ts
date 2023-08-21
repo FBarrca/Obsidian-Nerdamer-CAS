@@ -2,7 +2,6 @@ import { EditorView, WidgetType } from "@codemirror/view";
 import nerdamer from "nerdamer";
 import { finishRenderMath, renderMath } from "obsidian";
 
-import { MathfieldElement } from 'mathlive';
 
 export class LatexWidget extends WidgetType {
   private text: string;
@@ -12,7 +11,7 @@ export class LatexWidget extends WidgetType {
     this.text = text;
   }
 
-  toDOM(view: EditorView): HTMLElement {
+  toDOM(_view: EditorView): HTMLElement {
     // create a span element to hold the math
     const span = document.createElement("span");
     span.classList.add("math");
@@ -26,7 +25,7 @@ export class LatexWidget extends WidgetType {
 
     // add class nerdamer-container to the div
     mathContainer.classList.add("nerdamer-container");
-    const mathRendered = mathContainer.firstChild as HTMLElement;
+    // const mathRendered = mathContainer.firstChild as HTMLElement;
     // mathRendered.classList.add("nerdamer-render");
     finishRenderMath();
     return span;

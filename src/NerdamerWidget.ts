@@ -6,6 +6,7 @@ import nerdamer from "nerdamer/all.min";
 
 // Internal Modules
 import { LatexWidget } from "./NerdamerDOM";
+import { SyntaxNodeRef } from "@lezer/common";
 
 // State Field for Nerdamer List
 export const NerdamerListField = StateField.define<Decoration>({
@@ -42,13 +43,14 @@ function isCursorInsideNode(cursorPos: number, node: any): boolean {
 
 // Handles inline code nodes
 function handleInlineCodeNode(
-  node: any,
+  node: SyntaxNodeRef,
   cursorPos: number,
   transaction: Transaction,
   builder: RangeSetBuilder<Decoration>
 ): void {
   let content = transaction.state.sliceDoc(node.from, node.to);
 
+  // eslint-disable-next-line no-useless-escape
   const variableDeclaration: string[] | null = /^([a-z_][a-z\d\_]*):=(.+)$/gi.exec(content);
   if (variableDeclaration) {
     content = setNerdamerVariable(variableDeclaration[1], variableDeclaration[2]);
