@@ -52,7 +52,7 @@ export const NerdamerListField = StateField.define<Decoration>({
 
 // Check if cursor is inside a node
 function isCursorInsideNode(cursorPos: number, node: SyntaxNodeRef): boolean {
-  console.log("Cursor:", cursorPos, "Node:", node.from, node.to);
+  // console.log("Cursor:", cursorPos, "Node:", node.from, node.to);
   return cursorPos >= node.from + 1 && cursorPos <= node.to - 1;
 }
 
