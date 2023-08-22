@@ -70,7 +70,11 @@ function solveExpression(expression: string, variable: string): string {
 function evaluateExpression(content: string): string {
   const expression = content.replace("=?", "");
   // result as numeric value in scientific notation
-  const result = nerdamer(expression).evaluate().text("decimals");
+  let result = nerdamer(expression).evaluate();
+  // if result is very small or large, convert to scientific notation
+  if (result < 1e-3 || result > 1e3) result = result.text("scientific");
+  else result = result.text("decimals", 5);
+
   return `${expression} \\Rightarrow ${result}`;
 }
 
