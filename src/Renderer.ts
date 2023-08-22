@@ -31,7 +31,7 @@ export class LatexWidget extends WidgetType {
   }
 
   private getFormula(formula: string): string {
-    console.log("Formula:", formula);
+    // console.log("Formula:", formula);
     return formula.toString();
   }
 }
