@@ -3,9 +3,9 @@ import { syntaxTree } from "@codemirror/language";
 import { Extension, RangeSetBuilder, StateField, Transaction } from "@codemirror/state";
 import { Decoration, EditorView } from "@codemirror/view";
 // Internal Modules
-import { renderNerdamerBlock } from "./NerdamerDOM";
+import { renderNerdamerBlock } from "./Renderer";
 import { SyntaxNodeRef } from "@lezer/common";
-import { createFunction, evaluateExpression, setNerdamerVariable, solveExpression } from "./nerdamerHelpers";
+import { createFunction, evaluateExpression, setNerdamerVariable, solveExpression } from "./Helpers";
 
 // Patterns for various string matches
 const PATTERNS = {

@@ -1,7 +1,7 @@
 import { Extension } from "@codemirror/state";
 import { Plugin, finishRenderMath, loadMathJax } from "obsidian";
 import { DEFAULT_SETTINGS, LapelSettings, LapelSettingsTab } from "./settings";
-import { NerdamerListField } from "./NerdamerWidget";
+import { NerdamerListField } from "./EditorExtension";
 
 export default class LapelPlugin extends Plugin {
   public settings: LapelSettings;
@@ -13,7 +13,7 @@ export default class LapelPlugin extends Plugin {
     await finishRenderMath();
     // this.cmExtension = headingMarkerPlugin(this.app, this.settings.showBeforeLineNumbers);
     // this.registerEditorExtension([this.cmExtension]);
-    this.registerEditorExtension([ NerdamerListField]);
+    this.registerEditorExtension([NerdamerListField]);
     this.registerSettingsTab();
   }
 
@@ -25,9 +25,7 @@ export default class LapelPlugin extends Plugin {
     this.addSettingTab(new LapelSettingsTab(this.app, this));
   }
 
-  public async updateSettings(
-    tx: (old: LapelSettings) => Partial<LapelSettings>
-  ): Promise<void> {
+  public async updateSettings(tx: (old: LapelSettings) => Partial<LapelSettings>): Promise<void> {
     const changedSettings = tx(this.settings);
     const newSettings = Object.assign({}, this.settings, changedSettings);
     if (this.settings.showBeforeLineNumbers !== changedSettings.showBeforeLineNumbers) {
