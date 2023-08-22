@@ -1,5 +1,6 @@
-import { EditorView, WidgetType } from "@codemirror/view";
-import nerdamer from "nerdamer";
+import { RangeSetBuilder } from "@codemirror/state";
+import { Decoration, EditorView, WidgetType } from "@codemirror/view";
+import { SyntaxNodeRef } from "@lezer/common";
 import { finishRenderMath, renderMath } from "obsidian";
 
 export class LatexWidget extends WidgetType {
@@ -31,8 +32,16 @@ export class LatexWidget extends WidgetType {
 
   private getFormula(formula: string): string {
     console.log("Formula:", formula);
-    // const latex = nerdamer.convertToLaTeX(formula);
-    // console.log("Latex:", latex);
     return formula.toString();
   }
+}
+
+export function renderNerdamerBlock(node: SyntaxNodeRef, content: string, builder: RangeSetBuilder<Decoration>): void {
+  builder.add(
+    node.from,
+    node.to,
+    Decoration.replace({
+      widget: new LatexWidget(content),
+    })
+  );
 }

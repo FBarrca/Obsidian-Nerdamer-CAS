@@ -2,11 +2,10 @@
 import { syntaxTree } from "@codemirror/language";
 import { Extension, RangeSetBuilder, StateField, Transaction } from "@codemirror/state";
 import { Decoration, EditorView } from "@codemirror/view";
-import nerdamer from "nerdamer/all.min";
-
 // Internal Modules
-import { LatexWidget } from "./NerdamerDOM";
+import { renderNerdamerBlock } from "./NerdamerDOM";
 import { SyntaxNodeRef } from "@lezer/common";
+import { createFunction, evaluateExpression, setNerdamerVariable, solveExpression } from "./nerdamerHelpers";
 
 // Patterns for various string matches
 const PATTERNS = {
@@ -57,32 +56,6 @@ function isCursorInsideNode(cursorPos: number, node: SyntaxNodeRef): boolean {
   return cursorPos >= node.from - 2 && cursorPos <= node.to + 2;
 }
 
-function setNerdamerVariable(variable: string, value: string): string {
-  nerdamer.setVar(variable, value);
-  return `${variable} := ${value}`;
-}
-
-function solveExpression(expression: string, variable: string): string {
-  const result = nerdamer.solve(expression, variable);
-  return `${expression} \\Rightarrow ${variable} = ${result}`;
-}
-
-function evaluateExpression(content: string): string {
-  const expression = content.replace("=?", "");
-  // result as numeric value in scientific notation
-  let result = nerdamer(expression).evaluate();
-  // if result is very small or large, convert to scientific notation
-  if (result < 1e-3 || result > 1e3) result = result.text("scientific");
-  else result = result.text("decimals", 5);
-
-  return `${expression} \\Rightarrow ${result}`;
-}
-
-function createFunction(name: string, variable: string, expression: string): string {
-  nerdamer.setFunction(name, variable, expression);
-  return `${name}(${variable}) = ${expression}`;
-}
-
 function handleInlineCodeNode(
   node: SyntaxNodeRef,
   cursorPos: number,
@@ -125,14 +98,4 @@ function handleInlineCodeNode(
 
   if (isCursorInsideNode(cursorPos, node)) return;
   renderNerdamerBlock(node, content, builder);
-}
-
-function renderNerdamerBlock(node: SyntaxNodeRef, content: string, builder: RangeSetBuilder<Decoration>): void {
-  builder.add(
-    node.from,
-    node.to,
-    Decoration.replace({
-      widget: new LatexWidget(content),
-    })
-  );
 }
