@@ -17,7 +17,7 @@ const PATTERNS = {
 };
 
 // Cache to store results for computed inline code blocks
-const nerdamerCache: Record<string, string> = {};
+const nerdamerCache = new Map<string, string>();
 
 // State Field for Nerdamer List
 export const NerdamerListField = StateField.define<Decoration>({
@@ -29,8 +29,9 @@ export const NerdamerListField = StateField.define<Decoration>({
     if (!cursorPos) return oldState;
 
     // Check if the cursor position is within any inline-code node.
-    const cursorNode = syntaxTree(transaction.state).resolve(cursorPos - 1);
-    const recompute = cursorNode.type.name === "inline-code";
+    const cursorBefore = syntaxTree(transaction.state).resolve(cursorPos - 1);
+    const cursorAfter = syntaxTree(transaction.state).resolve(cursorPos + 1);
+    const recompute = cursorBefore.type.name === "inline-code" || cursorAfter.type.name === "inline-code";
 
     const builder = new RangeSetBuilder<Decoration>();
     syntaxTree(transaction.state).iterate({
@@ -53,7 +54,7 @@ export const NerdamerListField = StateField.define<Decoration>({
 // Check if cursor is inside a node
 function isCursorInsideNode(cursorPos: number, node: SyntaxNodeRef): boolean {
   // console.log("Cursor:", cursorPos, "Node:", node.from, node.to);
-  return cursorPos >= node.from + 1 && cursorPos <= node.to - 1;
+  return cursorPos >= node.from - 2 && cursorPos <= node.to + 2;
 }
 
 function setNerdamerVariable(variable: string, value: string): string {
@@ -84,13 +85,18 @@ function handleInlineCodeNode(
   builder: RangeSetBuilder<Decoration>,
   recompute: boolean
 ): void {
-  let content = transaction.state.sliceDoc(node.from, node.to);
+  const nodeContent = transaction.state.sliceDoc(node.from, node.to); // Save the computed content
 
   // Check cache first:
-  if (nerdamerCache[content] && !recompute) {
-    renderNerdamerBlock(node, nerdamerCache[content], builder);
-    return;
+  if (nerdamerCache.has(nodeContent) && !recompute) {
+    const cachedContent = nerdamerCache.get(nodeContent);
+    if (cachedContent !== undefined) {
+      renderNerdamerBlock(node, cachedContent, builder);
+    }
+    return; // Early return if content found in cache
   }
+
+  let content = nodeContent;
 
   const varMatch = PATTERNS.VARIABLE_DECLARATION.exec(content);
   const solveMatch = PATTERNS.SOLVE_STRING.exec(content);
@@ -110,7 +116,7 @@ function handleInlineCodeNode(
   }
 
   // Update cache:
-  nerdamerCache[transaction.state.sliceDoc(node.from, node.to)] = content;
+  nerdamerCache.set(nodeContent, content);
 
   if (isCursorInsideNode(cursorPos, node)) return;
   renderNerdamerBlock(node, content, builder);
