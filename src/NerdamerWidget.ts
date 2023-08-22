@@ -16,6 +16,9 @@ const PATTERNS = {
   FUNCTION_STRING: /^([a-zA-Z_][a-zA-Z_0-9]*)\s*\(\s*([^)]+)\s*\)\s*:=\s*([^$]+)$/i,
 };
 
+// Cache to store results for computed inline code blocks
+const nerdamerCache: Record<string, string> = {};
+
 // State Field for Nerdamer List
 export const NerdamerListField = StateField.define<Decoration>({
   create(): Decoration {
@@ -25,11 +28,15 @@ export const NerdamerListField = StateField.define<Decoration>({
     const cursorPos = transaction.selection?.main.head;
     if (!cursorPos) return oldState;
 
+    // Check if the cursor position is within any inline-code node.
+    const cursorNode = syntaxTree(transaction.state).resolve(cursorPos);
+    const recompute = cursorNode.type.name === "inline-code";
+
     const builder = new RangeSetBuilder<Decoration>();
     syntaxTree(transaction.state).iterate({
       enter(node) {
         if (node.type.name === "inline-code") {
-          handleInlineCodeNode(node, cursorPos, transaction, builder);
+          handleInlineCodeNode(node, cursorPos, transaction, builder, recompute);
         }
       },
     });
@@ -45,7 +52,8 @@ export const NerdamerListField = StateField.define<Decoration>({
 
 // Check if cursor is inside a node
 function isCursorInsideNode(cursorPos: number, node: SyntaxNodeRef): boolean {
-  return cursorPos >= node.from - 1 && cursorPos <= node.to + 1;
+  console.log("Cursor:", cursorPos, "Node:", node.from, node.to);
+  return cursorPos >= node.from + 1 && cursorPos <= node.to - 1;
 }
 
 function setNerdamerVariable(variable: string, value: string): string {
@@ -73,9 +81,16 @@ function handleInlineCodeNode(
   node: SyntaxNodeRef,
   cursorPos: number,
   transaction: Transaction,
-  builder: RangeSetBuilder<Decoration>
+  builder: RangeSetBuilder<Decoration>,
+  recompute: boolean = true
 ): void {
   let content = transaction.state.sliceDoc(node.from, node.to);
+
+  // Check cache first:
+  if (nerdamerCache[content] && !recompute) {
+    renderNerdamerBlock(node, nerdamerCache[content], builder);
+    return;
+  }
 
   const varMatch = PATTERNS.VARIABLE_DECLARATION.exec(content);
   const solveMatch = PATTERNS.SOLVE_STRING.exec(content);
@@ -94,14 +109,17 @@ function handleInlineCodeNode(
     return; // was a normal inline code block
   }
 
+  // Update cache:
+  nerdamerCache[transaction.state.sliceDoc(node.from, node.to)] = content;
+
   if (isCursorInsideNode(cursorPos, node)) return;
   renderNerdamerBlock(node, content, builder);
 }
 
 function renderNerdamerBlock(node: SyntaxNodeRef, content: string, builder: RangeSetBuilder<Decoration>): void {
   builder.add(
-    node.from - 1,
-    node.to + 1,
+    node.from,
+    node.to,
     Decoration.replace({
       widget: new LatexWidget(content),
     })
