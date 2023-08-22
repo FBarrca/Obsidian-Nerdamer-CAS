@@ -9,10 +9,7 @@ const SI_PREFIXES: { [key: string]: number } = {
   G: 1e9,
   M: 1e6,
   k: 1e3,
-  h: 1e2,
-  da: 1e1,
-  d: 1e-1,
-  c: 1e-2,
+  "": 1,
   m: 1e-3,
   μ: 1e-6,
   u: 1e-6,
@@ -54,4 +51,29 @@ export function multiplyBySiPrefix(s: string): string {
   }
 
   return result;
+}
+
+export function formatSI(value: number | string): string {
+  if (typeof value === "string") {
+    const numberPattern = /^[-+]?(\d+(\.\d*)?|\.\d+)([eE][-+]?\d+)?$/;
+    if (!numberPattern.test(value)) return value;
+    else value = Number(value);
+  }
+  // Handle zero separately
+  if (value === 0) {
+    return "0";
+  }
+
+  // Determine the sign of the number
+  const sign = value < 0 ? "-" : "";
+  value = Math.abs(value);
+
+  for (const prefix in SI_PREFIXES) {
+    const limit = SI_PREFIXES[prefix];
+    if (value >= limit) {
+      return sign + value / limit + prefix; // Return the number up to 2 decimal places with prefix
+    }
+  }
+
+  return sign + value.toString(); // If the number is too small for any prefix
 }
