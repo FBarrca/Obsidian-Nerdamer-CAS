@@ -6,6 +6,7 @@ import { Decoration, EditorView } from "@codemirror/view";
 import { renderNerdamerBlock } from "./Renderer";
 import { SyntaxNodeRef } from "@lezer/common";
 import { createFunction, evaluateExpression, setNerdamerVariable, solveExpression } from "./Helpers";
+import { multiplyBySiPrefix } from "./units";
 
 // Patterns for various string matches
 const PATTERNS = {
@@ -74,7 +75,7 @@ function handleInlineCodeNode(
     return; // Early return if content found in cache
   }
 
-  let content = nodeContent;
+  let content = multiplyBySiPrefix(nodeContent);
 
   const varMatch = PATTERNS.VARIABLE_DECLARATION.exec(content);
   const solveMatch = PATTERNS.SOLVE_STRING.exec(content);
