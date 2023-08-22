@@ -82,7 +82,7 @@ function handleInlineCodeNode(
   cursorPos: number,
   transaction: Transaction,
   builder: RangeSetBuilder<Decoration>,
-  recompute: boolean = true
+  recompute: boolean
 ): void {
   let content = transaction.state.sliceDoc(node.from, node.to);
 
