@@ -7,18 +7,15 @@ export function setNerdamerVariable(variable: string, value: string): string {
 
 export function solveExpression(expression: string, variable: string): string {
   const result = nerdamer.solve(expression, variable);
-  return `${expression} \\Rightarrow ${variable} = ${result}`;
+  return `${expression} \\Rightarrow ${variable} = ${result.text("decimals", 5)}`;
 }
 
 export function evaluateExpression(content: string): string {
   const expression = content.replace("=?", "");
   // result as numeric value in scientific notation
-  let result = nerdamer(expression).evaluate();
-  // if result is very small or large, convert to scientific notation
-  if (result < 1e-3 || result > 1e3) result = result.text("scientific");
-  else result = result.text("decimals", 5);
+  const result = nerdamer(expression).evaluate();
 
-  return `${expression} \\Rightarrow ${result}`;
+  return `${expression} \\Rightarrow ${result.text("decimals", 5)}`;
 }
 
 export function createFunction(name: string, variable: string, expression: string): string {
