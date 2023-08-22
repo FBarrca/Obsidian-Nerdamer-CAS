@@ -29,7 +29,7 @@ export const NerdamerListField = StateField.define<Decoration>({
     if (!cursorPos) return oldState;
 
     // Check if the cursor position is within any inline-code node.
-    const cursorNode = syntaxTree(transaction.state).resolve(cursorPos);
+    const cursorNode = syntaxTree(transaction.state).resolve(cursorPos - 1);
     const recompute = cursorNode.type.name === "inline-code";
 
     const builder = new RangeSetBuilder<Decoration>();
