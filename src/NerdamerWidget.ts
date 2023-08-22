@@ -64,13 +64,14 @@ function setNerdamerVariable(variable: string, value: string): string {
 
 function solveExpression(expression: string, variable: string): string {
   const result = nerdamer.solve(expression, variable);
-  return `${expression} => ${variable} = ${result}`;
+  return `${expression} \\Rightarrow ${variable} = ${result}`;
 }
 
 function evaluateExpression(content: string): string {
   const expression = content.replace("=?", "");
-  const result = nerdamer(expression).evaluate();
-  return `${expression} => ${result}`;
+  // result as numeric value in scientific notation
+  const result = nerdamer(expression).evaluate().text("decimals");
+  return `${expression} \\Rightarrow ${result}`;
 }
 
 function createFunction(name: string, variable: string, expression: string): string {

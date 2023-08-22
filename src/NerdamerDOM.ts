@@ -2,7 +2,6 @@ import { EditorView, WidgetType } from "@codemirror/view";
 import nerdamer from "nerdamer";
 import { finishRenderMath, renderMath } from "obsidian";
 
-
 export class LatexWidget extends WidgetType {
   private text: string;
 
@@ -18,8 +17,7 @@ export class LatexWidget extends WidgetType {
     // contentEditable is set to false to prevent the cursor from moving inside the math
     span.contentEditable = "false";
 
-
-    const mathContainer = renderMath(this.getFormula(this.text),false);
+    const mathContainer = renderMath(this.getFormula(this.text), false);
     // append the rendered math to the span
     span.appendChild(mathContainer);
 
@@ -32,9 +30,9 @@ export class LatexWidget extends WidgetType {
   }
 
   private getFormula(formula: string): string {
-    const latex = nerdamer.convertToLaTeX(formula)
+    console.log("Formula:", formula);
+    // const latex = nerdamer.convertToLaTeX(formula);
     // console.log("Latex:", latex);
-    return latex.toString();
+    return formula.toString();
   }
 }
-
